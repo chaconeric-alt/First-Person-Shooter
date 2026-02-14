@@ -1,0 +1,39 @@
+{
+  "name": "scifi",
+  "description": "Futuristic space station with metallic panels and neon accents",
+  "tiles": {
+    "WALL": {
+      "mesh": "meshes/scifi_wall_panel.obj",
+      "material": "materials/brushed_metal.mat",
+      "scale": [1, 1, 1]
+    },
+    "FLOOR": {
+      "mesh": "meshes/scifi_floor_grate.obj",
+      "material": "materials/metal_grate.mat",
+      "scale": [1, 1, 1]
+    },
+    "ENTRY": {
+      "mesh": "meshes/scifi_teleport_pad.obj",
+      "material": "materials/neon_blue.mat",
+      "scale": [1, 1, 1]
+    },
+    "EXIT": {
+      "mesh": "meshes/scifi_teleport_pad.obj",
+      "material": "materials/neon_red.mat",
+      "scale": [1, 1, 1]
+    },
+    "DOOR": {
+      "mesh": "meshes/scifi_sliding_door.obj",
+      "material": "materials/brushed_metal_dark.mat",
+      "scale": [1, 1, 1]
+    },
+    "PILLAR": {
+      "mesh": "meshes/scifi_support_beam.obj",
+      "material": "materials/carbon_fiber.mat",
+      "scale": [1, 1, 1]
+    }
+  },
+  "ambient_light": [0.2, 0.25, 0.35],
+  "fog_color": [0.0, 0.05, 0.1],
+  "fog_density": 0.02
+}

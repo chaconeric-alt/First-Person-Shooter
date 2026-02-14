@@ -1,0 +1,39 @@
+{
+  "name": "outdoor_ruins",
+  "description": "Overgrown stone ruins in an outdoor jungle setting",
+  "tiles": {
+    "WALL": {
+      "mesh": "meshes/ruins_wall_broken.obj",
+      "material": "materials/sandstone_mossy.mat",
+      "scale": [1, 1, 1]
+    },
+    "FLOOR": {
+      "mesh": "meshes/ruins_floor_dirt.obj",
+      "material": "materials/dirt_grass.mat",
+      "scale": [1, 1, 1]
+    },
+    "ENTRY": {
+      "mesh": "meshes/ruins_floor_dirt.obj",
+      "material": "materials/stone_carved.mat",
+      "scale": [1, 1, 1]
+    },
+    "EXIT": {
+      "mesh": "meshes/ruins_altar.obj",
+      "material": "materials/gold_ancient.mat",
+      "scale": [1, 1, 1]
+    },
+    "DOOR": {
+      "mesh": "meshes/ruins_archway.obj",
+      "material": "materials/sandstone_cracked.mat",
+      "scale": [1.2, 1.2, 1.2]
+    },
+    "PILLAR": {
+      "mesh": "meshes/ruins_column_broken.obj",
+      "material": "materials/sandstone_mossy.mat",
+      "scale": [1, 1, 1]
+    }
+  },
+  "ambient_light": [0.5, 0.45, 0.3],
+  "fog_color": [0.3, 0.35, 0.2],
+  "fog_density": 0.008
+}

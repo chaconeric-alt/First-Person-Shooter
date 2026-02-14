@@ -1,0 +1,39 @@
+{
+  "name": "dungeon",
+  "description": "Dark medieval dungeon with stone walls and torchlight",
+  "tiles": {
+    "WALL": {
+      "mesh": "meshes/dungeon_wall_stone.obj",
+      "material": "materials/cobblestone_dark.mat",
+      "scale": [1, 1, 1]
+    },
+    "FLOOR": {
+      "mesh": "meshes/dungeon_floor_flagstone.obj",
+      "material": "materials/flagstone_worn.mat",
+      "scale": [1, 1, 1]
+    },
+    "ENTRY": {
+      "mesh": "meshes/dungeon_floor_flagstone.obj",
+      "material": "materials/rune_circle_green.mat",
+      "scale": [1, 1, 1]
+    },
+    "EXIT": {
+      "mesh": "meshes/dungeon_staircase_up.obj",
+      "material": "materials/cobblestone_dark.mat",
+      "scale": [1, 1, 1]
+    },
+    "DOOR": {
+      "mesh": "meshes/dungeon_arch_doorway.obj",
+      "material": "materials/iron_gate.mat",
+      "scale": [1, 1, 1]
+    },
+    "PILLAR": {
+      "mesh": "meshes/dungeon_pillar_round.obj",
+      "material": "materials/cobblestone_mossy.mat",
+      "scale": [1, 1, 1]
+    }
+  },
+  "ambient_light": [0.08, 0.06, 0.04],
+  "fog_color": [0.02, 0.02, 0.03],
+  "fog_density": 0.05
+}

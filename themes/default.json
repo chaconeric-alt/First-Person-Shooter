@@ -1,0 +1,39 @@
+{
+  "name": "default",
+  "description": "Generic indoor environment with neutral grey materials",
+  "tiles": {
+    "WALL": {
+      "mesh": "meshes/wall_standard.obj",
+      "material": "materials/concrete_grey.mat",
+      "scale": [1, 1, 1]
+    },
+    "FLOOR": {
+      "mesh": "meshes/floor_tile.obj",
+      "material": "materials/concrete_light.mat",
+      "scale": [1, 1, 1]
+    },
+    "ENTRY": {
+      "mesh": "meshes/floor_tile.obj",
+      "material": "materials/spawn_glow.mat",
+      "scale": [1, 1, 1]
+    },
+    "EXIT": {
+      "mesh": "meshes/exit_pad.obj",
+      "material": "materials/exit_glow.mat",
+      "scale": [1, 1, 1]
+    },
+    "DOOR": {
+      "mesh": "meshes/doorway.obj",
+      "material": "materials/concrete_grey.mat",
+      "scale": [1, 1, 1]
+    },
+    "PILLAR": {
+      "mesh": "meshes/pillar_square.obj",
+      "material": "materials/concrete_dark.mat",
+      "scale": [1, 1, 1]
+    }
+  },
+  "ambient_light": [0.3, 0.3, 0.3],
+  "fog_color": [0.1, 0.1, 0.1],
+  "fog_density": 0.01
+}
