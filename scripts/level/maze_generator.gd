@@ -94,7 +94,7 @@ func _carve_maze(level: LevelData, visited: Array, rx: int, ry: int) -> void:
 	# Shuffle directions
 	for i in range(dirs.size() - 1, 0, -1):
 		var j: int = randi() % (i + 1)
-		var tmp := dirs[i]
+		var tmp: Vector2i = dirs[i]
 		dirs[i] = dirs[j]
 		dirs[j] = tmp
 
