@@ -1,127 +1,126 @@
 extends Node3D
 
+## Path checked first.  If a CSV exists here it is loaded directly.
+## The Python level_generator writes to this same directory:
+##   python -m level_generator generate -o levels/map.csv
+const LEVEL_CSV_PATH := "res://levels/map.csv"
+
 func _ready() -> void:
-	"""Initialize test scene with procedural level."""
-	print("Main scene ready - creating test level")
-	
-	# Create test environment
-	var sky = ProceduralAssets.create_procedural_sky("day")
-	add_child(sky)
-	
-	# Create simple test room
-	_create_test_room()
-	
-	# Create player
-	_create_player()
-	
-	# Add some test enemies
-	_spawn_test_enemies()
+	"""Load a level CSV if one exists, otherwise generate a maze at runtime."""
+	print("Main scene ready")
 
-func _create_test_room() -> void:
-	"""Create a simple room for testing."""
-	# Floor
-	for x in range(-5, 6):
-		for z in range(-5, 6):
-			var floor = ProceduralAssets.create_floor_tile()
-			floor.position = Vector3(x * 4, 0, z * 4)
-			add_child(floor)
-	
-	# Walls (simple perimeter)
-	for x in range(-5, 6):
-		# Front and back walls
-		var wall_front = ProceduralAssets.create_wall_segment()
-		wall_front.position = Vector3(x * 4, 2, -20)
-		add_child(wall_front)
-		
-		var wall_back = ProceduralAssets.create_wall_segment()
-		wall_back.position = Vector3(x * 4, 2, 20)
-		add_child(wall_back)
-	
-	for z in range(-4, 5):
-		# Left and right walls
-		var wall_left = ProceduralAssets.create_wall_segment()
-		wall_left.position = Vector3(-20, 2, z * 4)
-		wall_left.rotation_degrees.y = 90
-		add_child(wall_left)
-		
-		var wall_right = ProceduralAssets.create_wall_segment()
-		wall_right.position = Vector3(20, 2, z * 4)
-		wall_right.rotation_degrees.y = 90
-		add_child(wall_right)
-	
-	print("Test room created with floor and walls")
+	# 1. Try to load a pre-generated level CSV
+	var level: LevelData = LevelData.load_csv(LEVEL_CSV_PATH)
 
-func _create_player() -> void:
-	"""Create and position player."""
-	var player = CharacterBody3D.new()
+	if level:
+		print("Loaded level from CSV: ", LEVEL_CSV_PATH)
+	else:
+		# 2. No CSV found — generate a maze in GDScript
+		print("No level CSV found at %s — generating maze" % LEVEL_CSV_PATH)
+		var gen := MazeGen.new()
+		gen.rooms_x = 5
+		gen.rooms_y = 5
+		gen.room_width = 3
+		gen.room_height = 3
+		gen.extra_doors = 0.15
+		gen.num_exits = 1
+		gen.theme_name = "default"
+		gen.maze_seed = -1  # random
+		level = gen.generate()
+
+		# Save so subsequent runs reuse the same map
+		level.save_csv(LEVEL_CSV_PATH)
+		print("Generated %dx%d maze, saved to %s" % [level.width, level.height, LEVEL_CSV_PATH])
+
+	# 3. Build 3D geometry from the grid
+	var result: Dictionary = LevelBuilder.build(level, self)
+
+	# 4. Create the player at the entry tile
+	_create_player(result.spawn_point)
+
+	# 5. Scatter enemies across rooms (skip the entry room)
+	_spawn_enemies_in_level(level)
+
+	print("Level ready — %dx%d tiles, theme=%s" % [level.width, level.height, level.theme_name])
+
+
+func _create_player(spawn: Vector3) -> void:
+	"""Create the FPS player at the given spawn point."""
+	var player := CharacterBody3D.new()
 	player.name = "Player"
-	
-	# Add collision shape
-	var collision = CollisionShape3D.new()
-	var shape = CapsuleShape3D.new()
+
+	var collision := CollisionShape3D.new()
+	var shape := CapsuleShape3D.new()
 	shape.radius = 0.5
 	shape.height = 1.8
 	collision.shape = shape
 	collision.position.y = 0.9
 	player.add_child(collision)
-	
-	# Add camera
-	var camera = Camera3D.new()
+
+	var camera := Camera3D.new()
 	camera.name = "Camera3D"
 	camera.position.y = 1.6
 	camera.current = true
 	player.add_child(camera)
-	
-	# Add player script
+
 	var script = load("res://scripts/player/player_controller.gd")
 	if script:
 		player.set_script(script)
-	
-	# Position player
-	player.position = Vector3(0, 2, 0)
+
+	player.position = spawn
 	player.add_to_group("player")
-	
 	add_child(player)
 	GameManager.player = player
-	
-	print("Player created at position ", player.position)
+	print("Player spawned at ", spawn)
 
-func _spawn_test_enemies() -> void:
-	"""Spawn some test enemies in the room."""
-	# Spawn a grunt
-	var grunt_visual = ProceduralAssets.create_enemy_by_type("grunt")
-	grunt_visual.position = Vector3(8, 0, 8)
-	add_child(grunt_visual)
-	
-	# Spawn a sniper
-	var sniper_visual = ProceduralAssets.create_enemy_by_type("sniper")
-	sniper_visual.position = Vector3(-8, 0, 8)
-	add_child(sniper_visual)
-	
-	# Spawn a brute
-	var brute_visual = ProceduralAssets.create_enemy_by_type("brute")
-	brute_visual.position = Vector3(8, 0, -8)
-	add_child(brute_visual)
-	
-	# Spawn a swarm
-	var swarm_visual = ProceduralAssets.create_enemy_by_type("swarm")
-	swarm_visual.position = Vector3(-8, 0, -8)
-	add_child(swarm_visual)
-	
-	# Add some items
-	var health = ProceduralAssets.create_item_health_small()
-	health.position = Vector3(0, 0.5, -10)
-	add_child(health)
-	
-	var armor = ProceduralAssets.create_item_armor_shard()
-	armor.position = Vector3(-10, 0.5, 0)
-	add_child(armor)
-	
-	var ammo = ProceduralAssets.create_item_ammo("shells")
-	ammo.position = Vector3(10, 0.5, 0)
-	add_child(ammo)
-	
-	print("Test enemies and items spawned")
+
+func _spawn_enemies_in_level(level: LevelData) -> void:
+	"""Place enemies at floor tiles spread across the level."""
+	# Collect all plain FLOOR positions
+	var floor_positions: Array[Vector2i] = []
+	for r in range(level.height):
+		for c in range(level.width):
+			if level.grid[r][c] == LevelData.TileType.FLOOR:
+				floor_positions.append(Vector2i(r, c))
+
+	if floor_positions.is_empty():
+		return
+
+	# Shuffle and pick a subset
+	floor_positions.shuffle()
+	var enemy_types := ["grunt", "sniper", "brute", "swarm"]
+	var count := mini(floor_positions.size(), 8)
+
+	for i in range(count):
+		var pos := floor_positions[i]
+		var world := Vector3(
+			pos.y * LevelBuilder.TILE_SIZE,
+			0.0,
+			pos.x * LevelBuilder.TILE_SIZE
+		)
+		var etype: String = enemy_types[i % enemy_types.size()]
+		var enemy := ProceduralAssets.create_enemy_by_type(etype)
+		enemy.position = world
+		add_child(enemy)
+
+	# Drop a few pickups near the middle of the map
+	var mid_idx := floor_positions.size() / 2
+	for offset in range(3):
+		if mid_idx + offset >= floor_positions.size():
+			break
+		var p := floor_positions[mid_idx + offset]
+		var wpos := Vector3(
+			p.y * LevelBuilder.TILE_SIZE,
+			0.5,
+			p.x * LevelBuilder.TILE_SIZE
+		)
+		var items := ["health", "armor", "ammo_shells"]
+		var item := ProceduralAssets.create_item_by_type(items[offset % items.size()])
+		item.position = wpos
+		add_child(item)
+
+	print("Spawned %d enemies and pickups" % count)
+
 
 func _input(event: InputEvent) -> void:
 	"""Handle global input."""

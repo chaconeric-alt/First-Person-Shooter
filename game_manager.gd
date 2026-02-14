@@ -324,12 +324,33 @@ func start_game() -> void:
 	game_started.emit()
 
 func load_level(level_id: String) -> void:
-	"""Transition to specified level."""
+	"""Transition to specified level.
+
+	Looks for a CSV at res://levels/<level_id>.csv.  If found it is loaded,
+	otherwise a maze is generated and saved there for next time.
+	"""
 	current_level_id = level_id
-	print("Loading level: ", level_id)
-	
-	# Level loader will handle the actual loading
-	# This will be implemented when we create the level loader
+	var csv_path := "res://levels/%s.csv" % level_id
+	print("Loading level: ", level_id, " from ", csv_path)
+
+	var level: LevelData = LevelData.load_csv(csv_path)
+	if not level:
+		print("CSV not found — generating maze for ", level_id)
+		var gen := MazeGen.new()
+		gen.rooms_x = 5
+		gen.rooms_y = 5
+		gen.theme_name = "default"
+		level = gen.generate()
+		level.save_csv(csv_path)
+
+	# Clear existing scene tree children (except autoloads)
+	var root := get_tree().current_scene
+	for child in root.get_children():
+		child.queue_free()
+
+	# Build the new level geometry under the scene root
+	var result: Dictionary = LevelBuilder.build(level, root)
+	print("Level %s built — spawn at %s" % [level_id, result.spawn_point])
 
 func pause_game() -> void:
 	"""Pause game, show menu."""
