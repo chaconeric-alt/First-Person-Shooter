@@ -18,11 +18,26 @@ The game currently includes:
 
 ## 🚀 How to Run
 
+### Game (Godot)
+
 1. **Install Godot 4.3+** from https://godotengine.org
-2. **Import the project** in Godot
+2. **Open the repository root** as a Godot project (the `project.godot` is at the top level)
 3. **Press F5** to run
 
 That's it! No assets to download, no external dependencies.
+
+### Level Generator (Python)
+
+```bash
+# Generate a new maze level
+python -m level_generator generate -o levels/map.csv --theme themes/dungeon.json --seed 42
+
+# Load and display an existing level
+python -m level_generator load levels/map.csv
+
+# Run tests
+python -m pytest tests/
+```
 
 ## 🎯 Controls
 
@@ -34,21 +49,31 @@ That's it! No assets to download, no external dependencies.
 
 ## 📁 Project Structure
 
+The repository root is the Godot project — everything lives in one integrated package.
+
 ```
-res://
-├── main.tscn/gd              # Test scene with procedural level
-├── game_manager.gd            # Autoload singleton - manages game state
-├── csv/                       # Auto-generated game data
-│   ├── enemies.csv
-│   ├── weapons.csv
-│   ├── items.csv
-│   └── projectiles.csv
-└── scripts/
-    ├── player/
-    │   └── player_controller.gd    # Quake-style FPS movement
-    └── utils/
-        ├── csv_parser.gd           # CSV data loading
-        └── procedural_assets.gd    # ALL visual assets generated here
+./
+├── project.godot                  # Godot 4 project config (repo root)
+├── main.tscn / main.gd           # Test scene with procedural level
+├── game_manager.gd                # Autoload singleton - game state & CSV data
+├── test_procedural.gd             # Quick asset verification script
+├── scripts/
+│   ├── player/
+│   │   └── player_controller.gd   # Quake-style FPS movement
+│   └── utils/
+│       ├── csv_parser.gd          # CSV data loading/saving
+│       └── procedural_assets.gd   # ALL visual assets generated here
+├── level_generator/               # Python maze level generator
+│   ├── maze.py                    # Recursive-backtracking maze algorithm
+│   ├── level.py                   # Level/TileType data models
+│   ├── csv_handler.py             # CSV serialization for levels
+│   ├── theme.py                   # Theme system for asset mapping
+│   └── cli.py                     # Command-line interface
+├── themes/                        # Theme JSON configs (dungeon, scifi, etc.)
+├── levels/                        # Generated level CSV output
+├── tests/                         # Python unit tests
+│   └── test_level_generator.py
+└── csv/                           # Auto-generated game balance data (runtime)
 ```
 
 ## 🎨 Procedural Asset System
@@ -70,7 +95,7 @@ To continue development, you can:
 
 1. **Add AI Behavior** - Implement the AI state machine for enemies
 2. **Add Weapon System** - Create firing mechanics and projectiles
-3. **Level Generator** - Implement the BSP-based level generator
+3. **Integrate Level Generator** - Load generated maze CSVs into the Godot scene
 4. **HUD/UI** - Add health/armor displays, crosshair
 5. **Sound System** - Add sound effects and music
 6. **Replace Procedural Assets** - Swap in artist-made 3D models
