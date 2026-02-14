@@ -1,3 +1,11 @@
+# Godot
+.godot/
+*.import
+
+# Python
 __pycache__/
 *.pyc
 .pytest_cache/
+
+# Generated game data
+csv/
